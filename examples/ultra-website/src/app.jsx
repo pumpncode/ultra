@@ -3,8 +3,7 @@ import { Helmet } from "helmet";
 import { Route } from "wouter";
 import { SWRConfig } from "swr";
 import ultraCache from "ultra/cache";
-
-const Index = lazy(() => import("./index.jsx"));
+import Index from './index.jsx'
 
 const options = (cache) => ({
   provider: () => ultraCache(cache),
