@@ -6,3 +6,6 @@ start:
 
 cache:
 	deno cache --reload --no-check server.js
+
+build:
+	deno run  --allow-net --allow-read --allow-env --allow-run --allow-write --unstable ../../src/deploy/deno.js
