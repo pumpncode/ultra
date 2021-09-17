@@ -6,7 +6,7 @@ const fetcher = (url) => fetch(url).then((r) => r.json());
 const link =
   "https://github.com/exhibitionist-digital/ultra/tree/master/examples";
 const Examples = () => {
-  const { data } = useSWR(`https://ultra.deno.dev/data.json`, fetcher);
+  const { data } = useSWR(`https://ultra.pages.dev/data.json`, fetcher);
   const { examples } = data;
   return /* @__PURE__ */ React.createElement(
     React.Fragment,
