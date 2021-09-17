@@ -6,7 +6,6 @@ import {
 
 import transform from "../transform.ts";
 
-
 //get importmap
 const importmapSource = await Deno.readTextFile("importmap.json");
 const importmap = JSON.parse(importmapSource);
@@ -35,31 +34,5 @@ for (const entry of walkSync("./src")) {
     );
   }
 }
-
-// let render = await Deno.readTextFile('render.ts')
-
-// render = 'import app from "./app.js";' + render;
-
-// render = render.replace("app.default", "app");
-
-// render = await transform({
-//   source: render,
-//   importmap,
-//   root: "https://ultra.deno.dev",
-//   skip: true,
-// });
-
-// await Deno.writeTextFile(".ultra/render.js", render);
-
-// let ultra = await Deno.readTextFile('ultra.ts')
-
-// ultra = await transform({
-//   source: ultra,
-//   importmap,
-//   root: "https://ultra.deno.dev",
-//   skip: true,
-// });
-
-// await Deno.writeTextFile(".ultra/ultra.js", ultra);
 
 Deno.exit();
