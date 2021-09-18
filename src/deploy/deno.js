@@ -19,7 +19,7 @@ for (const entry of walkSync("./src")) {
     let t = await transform({
       source,
       importmap,
-      root: "http://localhost:8080",
+      root: "https://ultra.deno.dev",
     });
     await Deno.writeTextFile(
       `${
