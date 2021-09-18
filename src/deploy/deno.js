@@ -10,8 +10,6 @@ import transform from "../transform.ts";
 const importmapSource = await Deno.readTextFile("importmap.json");
 const importmap = JSON.parse(importmapSource);
 
-console.log(importmap);
-
 const transforms = { "jsx": true, "tsx": true };
 
 for (const entry of walkSync("./src")) {

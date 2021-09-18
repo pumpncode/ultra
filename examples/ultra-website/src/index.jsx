@@ -8,12 +8,11 @@ const link =
 
 const Examples = () => {
   const { data } = useSWR(`ULTRA_URL/data.json`, fetcher);
-  const { examples } = data;
   return (
     <>
       <h3>Check out these examples</h3>
       <section>
-        {examples.map((
+        {data?.examples.map((
           ex,
         ) => (
           <a target="_blank" href={ex.url} className="ex" rel="noopener">
@@ -27,14 +26,6 @@ const Examples = () => {
         Source code for these can be found on&nbsp;
         <a href={link} target="_blank" rel="noopener">GitHub</a>
       </p>
-      <h4>Go ahead, run Lighthouse, we dare you</h4>
-      <img
-        className="lighthouse"
-        width="100%"
-        height="auto"
-        alt="perfect lighthouse score"
-        src="/lighthouse.png"
-      />
     </>
   );
 };
