@@ -9,6 +9,7 @@ import { HelmetProvider } from "https://esm.sh/react-helmet-async?deps=react@18.
 import { lookup } from "https://deno.land/x/media_types/mod.ts";
 import { Buffer } from "https://deno.land/std@0.107.0/io/mod.ts";
 import { concat } from "https://deno.land/std@0.107.0/bytes/mod.ts";
+import { join } from "https://deno.land/std@0.107.0/path/mod.ts";
 
 const defaultBufferSize = 8 * 1024;
 const defaultChunkSize = 8 * 1024;
@@ -54,8 +55,8 @@ async function handleRequest(event) {
 
   // static files in pages
   if (buildFiles.indexOf(url.pathname) >= 0) {
-    const file = await fetch(`https://ultra.pages.dev${url.pathname}`);
-    return new Response(await file.text(), {
+    const file = await Deno.readFile(join(".", url.pathname));
+    return new Response(file, {
       headers: {
         "content-type": lookup(url.pathname),
       },
@@ -214,11 +215,11 @@ async function pushBody(reader, controller, chunkSize) {
       if (write.length > chunkSize) {
         parts.push(write.slice(chunkSize));
       }
-     
+
       controller.enqueue(write.slice(0, chunkSize));
     }
   }
-  
+
   controller.enqueue(concat(...parts));
 }
 
