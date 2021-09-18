@@ -1,4 +1,4 @@
-import app from "https://ultra.pages.dev/app.js?ts=x";
+import app from "./app.js";
 import React from "https://esm.sh/react@18.0.0-alpha-67f38366a-20210830?no-check";
 import ReactDOM from "https://esm.sh/react-dom@18.0.0-alpha-67f38366a-20210830/server?no-check";
 import { Router } from "https://esm.sh/wouter?deps=react@18.0.0-alpha-67f38366a-20210830&bundle&no-check";
@@ -54,7 +54,11 @@ async function handleRequest(event) {
     });
   } else {
     return new Response(
-      await render({ pathname: url.pathname, importmap, lang: "en" }),
+      await render({
+        pathname: url.pathname,
+        importmap,
+        lang: "en",
+      }),
       {
         headers: {
           "content-type": lookup(".html"),
@@ -68,7 +72,7 @@ const render = async ({ pathname, importmap, lang }) => {
   const ts = +new Date();
   const helmetContext = { helmet: {} };
   const cache = new Map();
-  const body = ReactDOM.renderToString(
+  const body = ReactDOM.renderToReadableStream(
     React.createElement(
       Router,
       { hook: staticLocationHook(pathname) },
@@ -94,8 +98,7 @@ const render = async ({ pathname, importmap, lang }) => {
   }";import App from "/app.js";const root = hydrateRoot(document.getElementById('ultra'),createElement(Router, null, createElement(HelmetProvider, null, createElement(App))))<\/script></head><body><div id="ultra">`;
   console.log({ head });
 
-  return head + body
-  let s = new ReadableStream({
+  return new ReadableStream({
     start(controller) {
       function pushStream(stream) {
         const reader = stream.getReader();
@@ -114,17 +117,9 @@ const render = async ({ pathname, importmap, lang }) => {
       const queue = (part) => Promise.resolve(controller.enqueue(part));
 
       queue(head)
-        .then(() => pushStream(body))
-        .then(() =>
-          queue(
-            `</div></body></html>`,
-          )
-        )
         .then(() => controller.close());
     },
   });
-
-  return new Response(s).text()
 };
 
 const staticLocationHook = (path = "/", { record = false } = {}) => {
