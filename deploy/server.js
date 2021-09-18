@@ -68,7 +68,7 @@ const render = async ({ pathname, importmap, lang }) => {
   const ts = +new Date();
   const helmetContext = { helmet: {} };
   const cache = new Map();
-  const body = ReactDOM.renderToReadableStream(
+  const body = ReactDOM.renderToString(
     React.createElement(
       Router,
       { hook: staticLocationHook(pathname) },
@@ -93,7 +93,9 @@ const render = async ({ pathname, importmap, lang }) => {
     importmap.imports["helmet"]
   }";import App from "/app.js";const root = hydrateRoot(document.getElementById('ultra'),createElement(Router, null, createElement(HelmetProvider, null, createElement(App))))<\/script></head><body><div id="ultra">`;
   console.log({ head });
-  return new ReadableStream({
+
+  return head + body
+  let s = new ReadableStream({
     start(controller) {
       function pushStream(stream) {
         const reader = stream.getReader();
@@ -101,7 +103,6 @@ const render = async ({ pathname, importmap, lang }) => {
           function process(result) {
             if (result.done) return;
             try {
-              console.log(result)
               controller.enqueue(result.value);
               return reader.read().then(process);
             } catch (_e) {
@@ -122,6 +123,8 @@ const render = async ({ pathname, importmap, lang }) => {
         .then(() => controller.close());
     },
   });
+
+  return new Response(s).text()
 };
 
 const staticLocationHook = (path = "/", { record = false } = {}) => {
