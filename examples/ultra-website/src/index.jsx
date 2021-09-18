@@ -7,7 +7,7 @@ const link =
   "https://github.com/exhibitionist-digital/ultra/tree/master/examples";
 
 const Examples = () => {
-  const { data } = useSWR(`ULTRA_URL/data.json`, fetcher);
+  const { data } = useSWR(`https://ultrajs.dev/data.json`, fetcher);
   return (
     <>
       <h3>Check out these examples</h3>

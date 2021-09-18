@@ -55,8 +55,10 @@ async function handleRequest(event) {
 
   // static files in pages
   if (buildFiles.indexOf(url.pathname) >= 0) {
-    console.log('cwd', Deno.cwd(), url.pathname);
-    const file = await Deno.readFile(join('examples', 'ultra-website', 'src', url.pathname));
+    console.log("cwd", Deno.cwd(), url.pathname);
+    const file = await Deno.readFile(
+      join("examples", "ultra-website", "src", url.pathname),
+    );
     return new Response(file, {
       headers: {
         "content-type": lookup(url.pathname),
