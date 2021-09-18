@@ -1,3 +1,6 @@
+// example of a build script for deno deploy...
+// to run => $ deployctl run server.js
+
 import app from "./app.js";
 import React from "https://esm.sh/react@18.0.0-alpha-67f38366a-20210830?no-check";
 import ReactDOM from "https://esm.sh/react-dom@18.0.0-alpha-67f38366a-20210830/server?no-check";
