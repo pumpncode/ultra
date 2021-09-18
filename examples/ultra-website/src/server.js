@@ -69,6 +69,7 @@ async function handleRequest(event) {
 }
 
 const render = async ({ pathname, importmap, lang }) => {
+  console.log({pathname})
   const ts = +new Date();
   const helmetContext = { helmet: {} };
   const cache = new Map();
@@ -97,7 +98,7 @@ const render = async ({ pathname, importmap, lang }) => {
     importmap.imports["helmet"]
   }";import App from "/app.js";const root = hydrateRoot(document.getElementById('ultra'),createElement(Router, null, createElement(HelmetProvider, null, createElement(App))))<\/script></head><body><div id="ultra">`;
   console.log({ head });
-
+  return head
   return new ReadableStream({
     start(controller) {
       function pushStream(stream) {
