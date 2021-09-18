@@ -204,7 +204,6 @@ async function pushBody(reader, controller, chunkSize) {
 
   while (true) {
     const read = await reader.read();
-    console.log({ read });
     if (read.done) break;
     partsSize += read.value.length;
     parts.push(read.value);
@@ -215,11 +214,11 @@ async function pushBody(reader, controller, chunkSize) {
       if (write.length > chunkSize) {
         parts.push(write.slice(chunkSize));
       }
-      console.log("x", write.slice(0, chunkSize));
+     
       controller.enqueue(write.slice(0, chunkSize));
     }
   }
-  console.log({ parts });
+  
   controller.enqueue(concat(...parts));
 }
 
