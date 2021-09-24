@@ -3,7 +3,9 @@ import { Helmet } from "helmet";
 import { Route } from "wouter";
 import { SWRConfig } from "swr";
 import ultraCache from "ultra/cache";
-import Index from "./index.jsx";
+import { Cache } from "https://deno.land/x/ultra/src/types.ts";
+
+const Index = lazy(() => import("./index.jsx"));
 
 const options = (cache) => ({
   provider: () => ultraCache(cache),
@@ -12,7 +14,7 @@ const options = (cache) => ({
   suspense: true,
 });
 
-const Ultra = ({ cache }) => {
+const Ultra = ({ cache }: { cache: Cache }) => {
   return (
     <SWRConfig value={options(cache)}>
       <Helmet>

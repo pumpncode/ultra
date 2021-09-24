@@ -61,14 +61,9 @@ TTFB by using the React streaming server renderer.
 ```bash
 # HTTP/2 200
 
-* Received 381 B chunk
-* Received 8 B chunk
-* Received 6 B chunk
-* Received 6 B chunk
-* Received 1 B chunk
-* Received 5 B chunk
-* Received 2 B chunk
-* Received 7 B chunk
+* Received 1259 B chunk
+* Received 1989 B chunk
+* Received 552 B chunk
 ```
 
 [Import Maps](https://github.com/WICG/import-maps) are used to manage 3rd party
@@ -177,7 +172,7 @@ middleware or routing your app might need.
 [Oak docs](https://github.com/oakserver/oak#application-middleware-and-context)
 
 ```js
-import ultra, { app } from "https://deno.land/x/ultra@v0.5/mod.ts";
+import ultra, { app } from "https://deno.land/x/ultra@v0.6/mod.ts";
 
 // logger middleware
 app.use(async (context, next) => {
@@ -194,7 +189,7 @@ await ultra({
 Custom routes can all be added, helpful for API's.
 
 ```js
-import ultra, { router } from "https://deno.land/x/ultra@v0.5/mod.ts";
+import ultra, { router } from "https://deno.land/x/ultra@v0.6/mod.ts";
 
 // example API route
 router.get("/api/:slug", async (context) => {
@@ -218,7 +213,7 @@ await ultra({
 Dockerfile which uses the official Denoland image.
 
 ```bash
-FROM denoland/deno:1.13.2
+FROM denoland/deno:1.14.0
 
 EXPOSE 3000 
 
