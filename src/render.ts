@@ -91,14 +91,6 @@ const render = async (
         queue(head)
           .then(() => queue(buffer.bytes({ copy: false })))
           .then(() => pushBody(bodyReader, controller, chunkSize))
-          .catch(async (e) => {
-            console.error("readable stream error", e);
-
-            // Might be possible to push something to the client that renders
-            // an error if in 'dev mode' here, but the markup that precedes it
-            // could very well be broken:
-            await queue("Error");
-          })
           .then(() => queue(tail()))
           .then(() => controller.close());
       },
