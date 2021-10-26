@@ -137,7 +137,10 @@ async function pushBody(reader, controller, chunkSize) {
 
   while (true) {
     const read = await reader.read();
-    if (read.done) break;
+    if (read.done) {
+      console.log('DONE')
+      return
+    }
     partsSize += read.value.length;
     parts.push(read.value);
     if (partsSize >= chunkSize) {
