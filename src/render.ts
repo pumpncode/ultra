@@ -99,7 +99,7 @@ const render = async (
             // could very well be broken:
             await queue("Error");
           })
-          .then(() => controller.enqueue(tail()))
+          .then(() => queue(tail()))
           .then(() => controller.close());
       },
     }),
