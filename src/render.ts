@@ -93,9 +93,9 @@ const render = async (
           .then(() => queue(buffer.bytes({ copy: false })))
           .then(() => pushBody(bodyReader, controller, chunkSize))
           .then(() => controller.enqueue(
-            `</div></body><script>self.__ultra = ${
+            encodeStream(`</div></body><script>self.__ultra = ${
               JSON.stringify(Array.from(cache.entries()))
-            }</script></html>`,
+            }</script></html>`),
            ))
           .then(() => controller.close());
       },
