@@ -92,9 +92,7 @@ const render = async (
         queue(head)
           .then(() => queue(buffer.bytes({ copy: false })))
           .then(() => pushBody(bodyReader, controller, chunkSize))
-          .then(() => queue(`</div></body><script>self.__ultra = ${
-      JSON.stringify(Array.from(cache.entries()))
-    }</script></html>`)
+          .then(() => queue(`</div></body><script>self.__ultra = ${JSON.stringify(Array.from(cache.entries()))}</script></html>`)
           .then(() => controller.close());
       },
     }),
