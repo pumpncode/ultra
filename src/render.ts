@@ -89,7 +89,7 @@ const render = async (
         const queue = (part: unknown) =>
           Promise.resolve(controller.enqueue(part));
 
-        queue(new TextEncoder().encode(head))
+        controller.enqueue(new TextEncoder().encode(head))
           .then(() => queue(buffer.bytes({ copy: false })))
           .then(() => pushBody(bodyReader, controller, chunkSize))
           .then(() => controller.enqueue(
