@@ -60,10 +60,11 @@ const render = async (
     `createElement(Router, null, createElement(HelmetProvider, null, createElement(App))))` +
     `</script></head><body><div id="ultra">`;
 
-  const tail = () =>
-    `</div></body><script>self.__ultra = ${
+  const tail = () => {
+    return `</div></body><script>self.__ultra = ${
       JSON.stringify(Array.from(cache.entries()))
     }</script></html>`;
+  }
 
   // body.getReader() can emit Uint8Arrays() or strings; our chunking expects
   // UTF-8 encoded Uint8Arrays at present, so this stream ensures everything
