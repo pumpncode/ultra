@@ -89,7 +89,8 @@ const render = async (
         const queue = (part: unknown) =>
           Promise.resolve(controller.enqueue(part));
 
-        queue(new TextEncoder().encode(head))
+       queue(new TextEncoder().encode(head))
+          .then(() => queue(buffer.bytes({ copy: false })))
           .then(() => pushBody(bodyReader, controller, chunkSize))
           .then(() => controller.enqueue(
             new TextEncoder().encode(`</div></body><script>self.__ultra = ${
