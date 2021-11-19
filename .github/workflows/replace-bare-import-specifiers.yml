@@ -37,7 +37,7 @@ jobs:
             - uses: actions/github-script@v5
               with:
                   script: |
-                      github.git.createCommit({
+                      github.rest.git.createCommit({
                         owner: context.repo.owner,
                         repo: context.repo.repo,
                         message: "replace bare import specificiers with urls",
