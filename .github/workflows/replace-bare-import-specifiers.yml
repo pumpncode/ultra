@@ -39,18 +39,32 @@ jobs:
                         ref: "heads/url-imports",
                       });
 
+                      console.log(`got the baseBranchRef ${baseBranchRef}`);
+
                       const currentCommit = await github.rest.git.getCommit({
                         owner: context.repo.owner,
                         repo: context.repo.repo,
                         commit_sha: baseBranchRef.data.object.sha,
                       });
 
-                      await github.rest.git.createCommit({
+                      console.log(`got the currentCommit ${currentCommit}`);
+
+                      const newCommit = await github.rest.git.createCommit({
                         owner: context.repo.owner,
                         repo: context.repo.repo,
                         message: "replace bare import specificiers with urls",
                         tree: currentCommit.data.tree.sha,
                         parents: [currentCommit.data.sha],
                       });
+
+                      github.rest.git.updateRef({
+                        owner: context.repo.owner,
+                        repo: context.repo.repo,
+                        ref: "heads/url-imports",
+                        sha: newCommit.data.sha,
+                      });
+
+                      console.log(`commit done`);
+
             - name: push
               run: git push
