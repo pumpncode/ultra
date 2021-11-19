@@ -30,18 +30,27 @@ jobs:
                   git config user.email github-actions@github.com
             - name: stage changed files
               run: git add .
-            - name: get git sha
-              run: |
-                  echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
-                  echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
             - uses: actions/github-script@v5
               with:
                   script: |
-                      github.rest.git.createCommit({
-                        owner: context.repo.owner,
-                        repo: context.repo.repo,
+                      const baseBranchRef = await octokit.rest.git.getRef({
+                        owner,
+                        repo,
+                        ref: "heads/url-imports",
+                      });
+
+                      const currentCommit = await octokit.rest.git.getCommit({
+                        owner,
+                        repo,
+                        commit_sha: baseBranchRef.data.object.sha,
+                      });
+
+                      await octokit.git.createCommit({
+                        owner,
+                        repo,
                         message: "replace bare import specificiers with urls",
-                        tree: context.sha
-                      })
+                        tree: currentCommit.data.tree.sha,
+                        parents: [currentCommit.data.sha],
+                      });
             - name: push
               run: git push
