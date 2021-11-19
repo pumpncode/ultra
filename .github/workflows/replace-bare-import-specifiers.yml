@@ -11,8 +11,6 @@ jobs:
               with:
                   deno-version: vx.x.x
             - uses: actions/checkout@v2
-            - name: fetch
-              run: git fetch
             - name: Merge main -> url-imports
               uses: everlytic/branch-merge@1.1.2
               with:
@@ -24,53 +22,11 @@ jobs:
               uses: actions/checkout@v2
               with:
                   ref: url-imports
-            - name: fetch
-              run: git fetch
             - name: replace bare import specificiers in files
               run: deno run -A ./.github/workflows/replace-bare-import-specifiers.js
-            - name: git config
-              run: |
-                  git config user.name github-actions
-                  git config user.email github-actions@github.com
-            - name: stage changed files
-              run: git add .
-            - uses: actions/github-script@v5
+            - name: Commit changes
+              uses: EndBug/add-and-commit@v7
               with:
-                  script: |
-                      const baseBranchRef = await github.rest.git.getRef({
-                        owner: context.repo.owner,
-                        repo: context.repo.repo,
-                        ref: "heads/url-imports",
-                      });
-
-                      console.log(`got the baseBranchRef ${baseBranchRef}`);
-
-                      const currentCommit = await github.rest.git.getCommit({
-                        owner: context.repo.owner,
-                        repo: context.repo.repo,
-                        commit_sha: baseBranchRef.data.object.sha,
-                      });
-
-                      console.log(`got the currentCommit ${currentCommit}`);
-
-                      const newCommit = await github.rest.git.createCommit({
-                        owner: context.repo.owner,
-                        repo: context.repo.repo,
-                        message: "replace bare import specificiers with urls",
-                        tree: currentCommit.data.tree.sha,
-                        parents: [currentCommit.data.sha],
-                      });
-
-                      await github.rest.git.updateRef({
-                        owner: context.repo.owner,
-                        repo: context.repo.repo,
-                        ref: "heads/url-imports",
-                        sha: newCommit.data.sha,
-                      });
-
-                      console.log(`commit done`);
-
-            - name: rebase
-              run: git rebase url-imports
+                  default_author: github_actions
             - name: push
               run: git push
