@@ -13,7 +13,6 @@ const modifiedImports = { ...imports };
 
 modifiedImports.ultra = "https://raw.githubusercontent.com/nnmrts/ultra/url-imports/mod.ts"
 
-
 const fixEntry = async ({
 	path,
 	name,
