@@ -18,6 +18,9 @@ const fixEntry = async ({
 	name,
 	isFile
 }) => {
+	console.log(path);
+	console.log(name);
+
 	const isFileWithPossibleImports = name.match(/\.(?:j|t)sx?$/) !== null;
 
 	const isNotInDotGithub = !path.startsWith(".github");
@@ -25,6 +28,8 @@ const fixEntry = async ({
 	const relevant = isFile && isFileWithPossibleImports && isNotInDotGithub
 
 	if (relevant) {
+		console.log("relevant");
+
 		const js = await readTextFile(path);
 
 		let newJs = js;
