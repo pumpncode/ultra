@@ -41,6 +41,8 @@ const fixEntry = async ({
 		}
 
 		await writeTextFile(path, newJs);
+
+		console.log(newJs);
 	}
 }
 
