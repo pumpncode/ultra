@@ -33,19 +33,19 @@ jobs:
             - uses: actions/github-script@v5
               with:
                   script: |
-                      const baseBranchRef = await octokit.rest.git.getRef({
+                      const baseBranchRef = await github.rest.git.getRef({
                         owner,
                         repo,
                         ref: "heads/url-imports",
                       });
 
-                      const currentCommit = await octokit.rest.git.getCommit({
+                      const currentCommit = await github.rest.git.getCommit({
                         owner,
                         repo,
                         commit_sha: baseBranchRef.data.object.sha,
                       });
 
-                      await octokit.git.createCommit({
+                      await github.git.createCommit({
                         owner,
                         repo,
                         message: "replace bare import specificiers with urls",
