@@ -45,7 +45,7 @@ jobs:
                         commit_sha: baseBranchRef.data.object.sha,
                       });
 
-                      await github.git.createCommit({
+                      await github.rest.git.createCommit({
                         owner: context.repo.owner,
                         repo: context.repo.repo,
                         message: "replace bare import specificiers with urls",
