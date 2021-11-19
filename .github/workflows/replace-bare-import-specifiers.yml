@@ -1,34 +1,36 @@
 name: replace bare import specificiers
 on:
-    push:
-        branches:
-            - main
+  push:
+    branches:
+      - main
 jobs:
-    replace:
-        runs-on: macos-latest
-        steps:
-            - uses: denoland/setup-deno@v1
-              with:
-                  deno-version: vx.x.x
-            - uses: actions/checkout@v2
-              with:
-                  fetch-depth: 0
-            - name: Merge main -> url-imports
-              uses: everlytic/branch-merge@1.1.2
-              with:
-                  github_token: ${{ github.token }}
-                  source_ref: ${{ github.ref }}
-                  target_branch: "url-imports"
-                  commit_message_template: "[Automated] Merged {source_ref} into target {target_branch}"
-            - name: checkout url-imports
-              run: git checkout url-imports
-            - name: replace bare import specificiers in files
-              run: deno run -A ./.github/workflows/replace-bare-import-specifiers.js
-            - name: add
-              run: git add --all
-            - name: Commit changes
-              uses: EndBug/add-and-commit@v7
-              with:
-                  default_author: github_actions
-            - name: push
-              run: git push
+  replace:
+    runs-on: macos-latest
+    steps:
+      - uses: denoland/setup-deno@v1
+        with:
+          deno-version: vx.x.x
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: checkout url-imports
+        run: git checkout url-imports
+      - name: fetch
+        run: git fetch
+      - name: Merge main -> url-imports
+        uses: everlytic/branch-merge@1.1.2
+        with:
+          github_token: ${{ github.token }}
+          source_ref: "main"
+          target_branch: "url-imports"
+          commit_message_template: "[Automated] Merged {source_ref} into target {target_branch}"
+      - name: replace bare import specificiers in files
+        run: deno run -A ./.github/workflows/replace-bare-import-specifiers.js
+      - name: add
+        run: git add --all
+      - name: Commit changes
+        uses: EndBug/add-and-commit@v7
+        with:
+          default_author: github_actions
+      - name: push
+        run: git push
