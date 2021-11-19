@@ -57,7 +57,7 @@ jobs:
                         parents: [currentCommit.data.sha],
                       });
 
-                      github.rest.git.updateRef({
+                      await github.rest.git.updateRef({
                         owner: context.repo.owner,
                         repo: context.repo.repo,
                         ref: "heads/url-imports",
