@@ -34,14 +34,14 @@ jobs:
               with:
                   script: |
                       const baseBranchRef = await github.rest.git.getRef({
-                        owner,
-                        repo,
+                        owner: context.repo.owner,
+                        repo: context.repo.repo,
                         ref: "heads/url-imports",
                       });
 
                       const currentCommit = await github.rest.git.getCommit({
-                        owner,
-                        repo,
+                        owner: context.repo.owner,
+                        repo: context.repo.repo,
                         commit_sha: baseBranchRef.data.object.sha,
                       });
 
