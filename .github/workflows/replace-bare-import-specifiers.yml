@@ -67,5 +67,7 @@ jobs:
                       console.log(`commit done`);
             - name: fetch
               run: git fetch
+            - name: rebase
+              run: git rebase url-imports
             - name: push
               run: git push
