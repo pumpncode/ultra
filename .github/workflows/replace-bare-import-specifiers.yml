@@ -24,6 +24,8 @@ jobs:
                   ref: url-imports
             - name: replace bare import specificiers in files
               run: deno run -A ./.github/workflows/replace-bare-import-specifiers.js
+            - name: add
+              run: git add --all
             - name: Commit changes
               uses: EndBug/add-and-commit@v7
               with:
