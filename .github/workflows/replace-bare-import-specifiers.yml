@@ -30,7 +30,18 @@ jobs:
                   git config user.email github-actions@github.com
             - name: stage changed files
               run: git add .
-            - name: commit changed files
-              run: git commit -m "replace bare import specificiers with urls"
+            - name: get git sha
+              run: |
+                  echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+                  echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
+            - uses: actions/github-script@v5
+              with:
+                  script: |
+                      octokit.git.createCommit({
+                        owner: ${{ github.repository_owner }},
+                        repo: ${{ github.event.repository.name }},
+                        message: "replace bare import specificiers with urls",
+                        tree: ${{ steps.vars.outputs.sha_short }}
+                      })
             - name: push
               run: git push
