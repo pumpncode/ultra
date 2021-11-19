@@ -37,7 +37,7 @@ jobs:
             - uses: actions/github-script@v5
               with:
                   script: |
-                      octokit.git.createCommit({
+                      github.git.createCommit({
                         owner: context.repo.owner,
                         repo: context.repo.repo,
                         message: "replace bare import specificiers with urls",
