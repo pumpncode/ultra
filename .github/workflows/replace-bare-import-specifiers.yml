@@ -11,6 +11,8 @@ jobs:
               with:
                   deno-version: vx.x.x
             - uses: actions/checkout@v2
+              with:
+                  fetch-depth: 0
             - name: Merge main -> url-imports
               uses: everlytic/branch-merge@1.1.2
               with:
@@ -19,9 +21,7 @@ jobs:
                   target_branch: "url-imports"
                   commit_message_template: "[Automated] Merged {source_ref} into target {target_branch}"
             - name: checkout url-imports
-              uses: actions/checkout@v2
-              with:
-                  ref: url-imports
+              run: git checkout url-imports
             - name: replace bare import specificiers in files
               run: deno run -A ./.github/workflows/replace-bare-import-specifiers.js
             - name: add
