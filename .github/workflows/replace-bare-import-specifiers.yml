@@ -22,8 +22,6 @@ jobs:
               uses: actions/checkout@v2
               with:
                   ref: url-imports
-            - name: fetch
-              run: git fetch
             - name: replace bare import specificiers in files
               run: deno run -A ./.github/workflows/replace-bare-import-specifiers.js
             - name: git config
@@ -67,6 +65,7 @@ jobs:
                       });
 
                       console.log(`commit done`);
-
+            - name: fetch
+              run: git fetch
             - name: push
               run: git push
