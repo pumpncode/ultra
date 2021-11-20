@@ -16,15 +16,10 @@ jobs:
           REPO_NAME=$(echo $GITHUB_REPOSITORY | cut -d'/' -f 2)
           SOURCE_BRANCH=main
           NEW_BRANCH=url-imports
-      - name: clone
-        run: |
-          git clone https://github.com/$GITHUB_REPOSITORY.git
-      - name: step in
-        run: |
-          cd $REPO_NAME
-      - name: checkout url-imports
-        run: |
-          git checkout $NEW_BRANCH
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          ref: $NEW_BRANCH
       - name: merge
         run: |
           git merge --ff-only $(git commit-tree -m "chore: 🔀 Throw away branch $NEW_BRANCH" -p $NEW_BRANCH -p $SOURCE_BRANCH $SOURCE_BRANCH^{tree})
