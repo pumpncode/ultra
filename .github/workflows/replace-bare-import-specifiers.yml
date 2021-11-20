@@ -1,36 +1,38 @@
-name: replace bare import specificiers
+name: replace bare import specifiers
 on:
   push:
     branches:
       - main
+env:
+  SOURCE_BRANCH: main
+  NEW_BRANCH: url-imports
 jobs:
   replace:
     runs-on: macos-latest
+    defaults:
+      run:
+        shell: zsh {0}
     steps:
-      - uses: denoland/setup-deno@v1
-        with:
-          deno-version: vx.x.x
-      - uses: actions/checkout@v2
+      - name: checkout ${{ env.NEW_BRANCH }}
+        uses: actions/checkout@v2
         with:
           fetch-depth: 0
-      - name: checkout url-imports
-        run: git checkout url-imports
-      - name: fetch
-        run: git fetch
-      - name: Merge main -> url-imports
-        uses: everlytic/branch-merge@1.1.2
-        with:
-          github_token: ${{ github.token }}
-          source_ref: "main"
-          target_branch: "url-imports"
-          commit_message_template: "[Automated] Merged {source_ref} into target {target_branch}"
-      - name: replace bare import specificiers in files
-        run: deno run -A ./.github/workflows/replace-bare-import-specifiers.js
-      - name: add
-        run: git add --all
-      - name: Commit changes
-        uses: EndBug/add-and-commit@v7
-        with:
-          default_author: github_actions
+          ref: ${{ env.NEW_BRANCH }}
+      - name: merge
+        run: |
+          git merge --ff-only $(git commit-tree -m "chore: 🔀 Throw away branch $NEW_BRANCH" -p $NEW_BRANCH -p $SOURCE_BRANCH $SOURCE_BRANCH^{tree})
+      - name: set up deno
+        run: |
+          brew install deno
+      - name: replace bare import specifiers
+        run: |
+          deno run -A ./.github/workflows/replace-bare-import-specifiers.js
+      - name: stage files
+        run: |
+          git add --all
+      - name: commit
+        run: |
+          git commit -m "chore: 🚚 replace bare import specifiers"
       - name: push
-        run: git push
+        run: |
+          git push
