@@ -20,7 +20,7 @@ jobs:
           ref: ${{ env.NEW_BRANCH }}
       - name: merge
         run: |
-          git merge --ff-only $(git commit-tree -m "chore: 🔀 Throw away branch $NEW_BRANCH" -p $NEW_BRANCH -p $SOURCE_BRANCH $SOURCE_BRANCH^{tree})
+          git merge --strategy-option=theirs $SOURCE_BRANCH
       - name: set up deno
         run: |
           brew install deno
