@@ -41,7 +41,7 @@ jobs:
           git add --all --sparse
       - name: commit
         run: |
-          git commit -m "chore: 🚚 replace bare import specifiers"
+          git commit --allow-empty -m "chore: 🚚 replace bare import specifiers"
       - name: push
         run: |
           git push
