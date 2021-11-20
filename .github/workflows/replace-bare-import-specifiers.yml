@@ -38,7 +38,12 @@ jobs:
           git branch -u origin/$NEW_BRANCH
       - name: merge
         run: |
-          git merge -S --strategy-option=theirs origin/$SOURCE_BRANCH -m "chore: 🔀 merge $SOURCE_BRANCH into $NEW_BRANCH"
+          git checkout $NEW_BRANCH
+          git merge -s ours origin/$SOURCE_BRANCH -m "chore: 🔀 merge $SOURCE_BRANCH into $NEW_BRANCH"
+          git checkout --detach origin/$SOURCE_BRANCH
+          git reset --soft $NEW_BRANCH
+          git checkout $NEW_BRANCH
+          git commit --amend -C HEAD
       - name: set up deno
         run: |
           brew install deno
