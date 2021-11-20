@@ -24,12 +24,26 @@ jobs:
         with:
           fetch-depth: 0
           ref: ${{ env.NEW_BRANCH }}
+      - name: import gpg key
+        uses: crazy-max/ghaction-import-gpg@v4
+        with:
+          gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
+          passphrase: ${{ secrets.PASSPHRASE }}
+          git_user_signingkey: true
+          git_commit_gpgsign: true
+          git_committer_email: 41898282+github-actions@users.noreply.github.com
+          git_committer_name: GitHub Actions
       - name: set upstream
         run: |
           git branch -u origin/$NEW_BRANCH
       - name: merge
         run: |
-          git merge --strategy-option=theirs origin/$SOURCE_BRANCH -m "chore: 🔀 merge $SOURCE_BRANCH into $NEW_BRANCH"
+          git checkout $NEW_BRANCH
+          git merge -s ours origin/$SOURCE_BRANCH -m "chore: 🔀 merge $SOURCE_BRANCH into $NEW_BRANCH"
+          git checkout --detach origin/$SOURCE_BRANCH
+          git reset --soft $NEW_BRANCH
+          git checkout $NEW_BRANCH
+          git commit --amend -C HEAD
       - name: set up deno
         run: |
           brew install deno
@@ -41,7 +55,7 @@ jobs:
           git add --all --sparse
       - name: commit
         run: |
-          git commit --allow-empty -m "chore: 🚚 replace bare import specifiers"
+          git commit -S --allow-empty -m "chore: 🚚 replace bare import specifiers"
       - name: push
         run: |
           git push
