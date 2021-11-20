@@ -33,9 +33,12 @@ jobs:
       - name: replace bare import specifiers
         run: |
           deno run -A ./.github/workflows/replace-bare-import-specifiers.js
+          cat ./src/render.ts
+          git status
       - name: stage files
         run: |
           git add --all --sparse
+          git status
       - name: commit
         run: |
           git commit -m "chore: 🚚 replace bare import specifiers"
