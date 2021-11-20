@@ -3,6 +3,9 @@ on:
   push:
     branches:
       - main
+env:
+  SOURCE_BRANCH: main
+  NEW_BRANCH: url-imports
 jobs:
   replace:
     runs-on: macos-latest
@@ -10,12 +13,6 @@ jobs:
       run:
         shell: zsh {0}
     steps:
-      - name: setup env
-        run: |
-          REPO_OWNER=$(echo $GITHUB_REPOSITORY | cut -d'/' -f 1)
-          REPO_NAME=$(echo $GITHUB_REPOSITORY | cut -d'/' -f 2)
-          SOURCE_BRANCH=main
-          NEW_BRANCH=url-imports
       - name: checkout ${{ env.NEW_BRANCH }}
         uses: actions/checkout@v2
         with:
