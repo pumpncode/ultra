@@ -1,7 +1,11 @@
 {
   "deno.enable": true,
-  "deno.importMap": "./modules.json",
   "deno.lint": true,
-  "editor.defaultFormatter": "denoland.vscode-deno",
-  "prettier.enable": false
+  "deno.unstable": true,
+  "deno.importMap": "./modules.json",
+  "deno.config": "./deno.json",
+  "deno.suggest.imports.hosts": {
+    "https://deno.land": true,
+    "https://x.nest.land": true
+  }
 }

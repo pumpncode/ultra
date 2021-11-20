@@ -13,6 +13,9 @@ const modifiedImports = { ...imports };
 
 modifiedImports.ultra = "https://raw.githubusercontent.com/nnmrts/ultra/url-imports/mod.ts"
 
+let fileCounter = 0;
+let replaceCounter = 0;
+
 const fixEntry = async ({
 	path,
 	name,
@@ -33,7 +36,11 @@ const fixEntry = async ({
 			const regex = new RegExp(`^import((?:(?!import)(?:.|\\n))*)"${name}";$`, "gm");
 
 			newJs = newJs.replaceAll(regex, `import$1"${url}"`);
+
+			replaceCounter += 1;
 		}
+
+		fileCounter += 1;
 
 		await writeTextFile(path, newJs);
 	}
@@ -42,3 +49,5 @@ const fixEntry = async ({
 for await (const entry of walk(".")) {
 	await fixEntry(entry);
 }
+
+console.log(`made ${replaceCounter} changes in ${fileCounter} files`);

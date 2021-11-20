@@ -8,19 +8,28 @@ env:
   NEW_BRANCH: url-imports
 jobs:
   replace:
-    runs-on: macos-latest
+    runs-on: macos-11
     defaults:
       run:
         shell: zsh {0}
     steps:
+      - name: set up brew
+        run: |
+          brew update
+      - name: set up git
+        run: |
+          brew install git
       - name: checkout ${{ env.NEW_BRANCH }}
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
           ref: ${{ env.NEW_BRANCH }}
+      - name: set upstream
+        run: |
+          git branch -u origin/$NEW_BRANCH
       - name: merge
         run: |
-          git merge --ff-only $(git commit-tree -m "chore: 🔀 Throw away branch $NEW_BRANCH" -p $NEW_BRANCH -p $SOURCE_BRANCH $SOURCE_BRANCH^{tree})
+          git merge --strategy-option=theirs origin/$SOURCE_BRANCH -m "chore: 🔀 merge $SOURCE_BRANCH into $NEW_BRANCH"
       - name: set up deno
         run: |
           brew install deno
@@ -29,10 +38,10 @@ jobs:
           deno run -A ./.github/workflows/replace-bare-import-specifiers.js
       - name: stage files
         run: |
-          git add --all
+          git add --all --sparse
       - name: commit
         run: |
-          git commit -m "chore: 🚚 replace bare import specifiers"
+          git commit --allow-empty -m "chore: 🚚 replace bare import specifiers"
       - name: push
         run: |
           git push
