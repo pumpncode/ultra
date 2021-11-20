@@ -6,6 +6,9 @@ on:
 jobs:
   replace:
     runs-on: macos-latest
+    defaults:
+      run:
+        shell: zsh {0}
     steps:
       - name: setup env
         run: |
