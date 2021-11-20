@@ -29,7 +29,7 @@ jobs:
           deno run -A ./.github/workflows/replace-bare-import-specifiers.js
       - name: stage files
         run: |
-          git add --all
+          git add --all --update --sparse
       - name: commit
         run: |
           git commit -m "chore: 🚚 replace bare import specifiers"
