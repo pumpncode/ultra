@@ -8,11 +8,14 @@ env:
   NEW_BRANCH: url-imports
 jobs:
   replace:
-    runs-on: macos-latest
+    runs-on: macos-11
     defaults:
       run:
         shell: zsh {0}
     steps:
+      - name: set up git
+        run: |
+          brew install git
       - name: checkout ${{ env.NEW_BRANCH }}
         uses: actions/checkout@v2
         with:
