@@ -13,6 +13,9 @@ jobs:
       run:
         shell: zsh {0}
     steps:
+      - name: set up brew
+        run: |
+          brew update
       - name: set up git
         run: |
           brew install git

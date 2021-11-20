@@ -3,5 +3,8 @@
   "deno.importMap": "./modules.json",
   "deno.lint": true,
   "editor.defaultFormatter": "denoland.vscode-deno",
-  "prettier.enable": false
+  "prettier.enable": false,
+  "[yaml]": {
+    "editor.defaultFormatter": "redhat.vscode-yaml"
+  }
 }
