@@ -1,7 +1,7 @@
-import { Helmet } from "react-helmet";
-import React, { useEffect, useState } from "react";
-import { Web3Provider } from "@ethersproject/providers";
-import type { ExternalProvider } from "@ethersproject/providers";
+import { Helmet } from "https://esm.sh/react-helmet-async?deps=react@18.0.0-alpha-bc9bb87c2-20210917&bundle"
+import React, { useEffect, useState } from "https://esm.sh/react@18.0.0-alpha-bc9bb87c2-20210917"
+import { Web3Provider } from "https://esm.sh/@ethersproject/providers"
+import type { ExternalProvider } from "https://esm.sh/@ethersproject/providers"
 
 declare global {
   interface Window {
