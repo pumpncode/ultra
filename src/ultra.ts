@@ -114,7 +114,6 @@ const start = (
   if (!dev) {
     const certFile = env.get("cert-file");
     const keyFile = env.get("key-file");
-    
 
     app.listen({port: 80});
     app.listen({port: 443, secure: true, certFile, keyFile });
