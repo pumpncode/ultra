@@ -115,13 +115,9 @@ const start = (
     const certFile = env.get("certFile");
     const keyFile = env.get("keyFile");
 
-    console.log(certFile);
-    console.log(keyFile);
+    app.listen({port: 443, secure: true, certFile, keyFile });
 
     app.listen({port: 80});
-
-    console.log("yay");
-    app.listen({port: 443, secure: true, certFile, keyFile });
   }
   else {
     app.listen({ port });
