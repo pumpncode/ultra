@@ -5,7 +5,7 @@ import {
   Application,
   Router,
   send,
-} from "https://deno.land/x/oak@v9.0.0/mod.ts";
+} from "https://deno.land/x/oak@v10.0.0/mod.ts";
 import render from "./render.ts";
 import transform from "./transform.ts";
 import type { ImportMap, StartOptions } from "./types.ts";
@@ -14,7 +14,7 @@ const {
   env
 } = Deno;
 
-const port = env.get("port") || 3000;
+const port = Number(env.get("port")) || 3000;
 const dev = env.get("mode") === "dev";
 
 const app = new Application();
