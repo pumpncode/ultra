@@ -10,12 +10,18 @@ import render from "./render.ts";
 import transform from "./transform.ts";
 import type { ImportMap, StartOptions } from "./types.ts";
 
+const {
+  env
+} = Deno;
+
+const port = env.get("port") || 3000;
+const dev = env.get("mode") === "dev";
+
 const app = new Application();
 const router = new Router();
 const memory = new LRU<string>(500);
 
 const isDev = Deno.env.get("mode") === "dev";
-const port = parseInt(Deno.env.get("port") || "", 10) || 3000;
 const root = Deno.env.get("url") || `http://localhost:${port}`;
 
 function findFileOnDisk(pathname: string) {
@@ -51,7 +57,7 @@ const start = (
 
   router.get("/:slug+.js", async (context, next) => {
     const { pathname } = context.request.url;
-    if (memory.has(pathname) && !isDev) {
+    if (memory.has(pathname) && !dev) {
       context.response.type = "application/javascript";
       context.response.body = memory.get(pathname);
       return;
@@ -69,7 +75,7 @@ const start = (
         root,
         loader: file.loader,
       });
-      if (!isDev) memory.set(pathname, code);
+      if (!dev) memory.set(pathname, code);
       context.response.type = "application/javascript";
       context.response.body = code;
     } catch (e) {
@@ -105,7 +111,16 @@ const start = (
     console.log(evt.error);
   });
 
-  app.listen({ port });
+  if (!dev) {
+    const certFile = env.get("cert-file");
+    const keyFile = env.get("key-file");
+
+    app.listen({port: 80});
+    app.listen({port: 443, secure: true, certFile, keyFile });
+  }
+  else {
+    app.listen({ port });
+  }
 };
 
 export default start;
