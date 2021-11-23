@@ -16,12 +16,12 @@ const {
 
 const port = Number(env.get("port")) || 3000;
 const dev = env.get("mode") === "dev";
+const prod = env.get("mode") === "prod";
 
 const app = new Application();
 const router = new Router();
 const memory = new LRU<string>(500);
 
-const isDev = Deno.env.get("mode") === "dev";
 const root = Deno.env.get("url") || `http://localhost:${port}`;
 
 function findFileOnDisk(pathname: string) {
@@ -111,11 +111,16 @@ const start = (
     console.log(evt.error);
   });
 
-  if (!dev) {
+  if (prod) {
     const certFile = env.get("certFile");
     const keyFile = env.get("keyFile");
 
+    console.log(certFile);
+    console.log(keyFile);
+
     app.listen({port: 80});
+
+    console.log("yay");
     app.listen({port: 443, secure: true, certFile, keyFile });
   }
   else {
