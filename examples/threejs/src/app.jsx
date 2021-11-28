@@ -1,5 +1,5 @@
-import { Helmet } from "react-helmet";
-import React, { useEffect, useRef, useState } from "react";
+import { Helmet } from "https://esm.sh/react-helmet-async?deps=react@18.0.0-alpha-bc9bb87c2-20210917&bundle"
+import React, { useEffect, useRef, useState } from "https://esm.sh/react@18.0.0-alpha-bc9bb87c2-20210917"
 import { Canvas, useFrame } from "three";
 
 const Ultra = () => {
