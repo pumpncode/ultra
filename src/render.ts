@@ -1,7 +1,7 @@
-import React, { ReactElement } from "https://esm.sh/react@18.0.0-alpha-bc9bb87c2-20210917"
-import ReactDOM from "https://esm.sh/react-dom@18.0.0-alpha-bc9bb87c2-20210917/server"
-import { BaseLocationHook, Router } from "https://esm.sh/wouter?deps=react@18.0.0-alpha-bc9bb87c2-20210917&bundle"
-import { HelmetProvider } from "https://esm.sh/react-helmet-async?deps=react@18.0.0-alpha-bc9bb87c2-20210917&bundle"
+import React, { ReactElement } from "react";
+import ReactDOM from "react-dom/server";
+import { BaseLocationHook, Router } from "wouter";
+import { HelmetProvider } from "react-helmet";
 import { concat } from "https://deno.land/std@0.107.0/bytes/mod.ts";
 import { join } from "https://deno.land/std@0.107.0/path/mod.ts";
 import { Buffer } from "https://deno.land/std@0.107.0/io/mod.ts";
@@ -77,9 +77,22 @@ const render = async (
     `</script></head><body>`;
 
   const tail = () =>
-    `</body><script>self.__ultra = ${
-      JSON.stringify(Array.from(cache.entries()))
-    }</script></html>`;
+    `<script>
+      self.__ultra = ${
+        JSON.stringify(Array.from(cache.entries()))
+      }
+      ${
+        !isDev
+				? `
+					if (typeof window.__REACT_DEVTOOLS_GLOBAL_HOOK__ === 'object') {
+						__REACT_DEVTOOLS_GLOBAL_HOOK__.inject = function() {};
+					}
+				`
+				: ``
+			}
+    </script>
+    </body>
+    </html>`;
 
   // body.getReader() can emit Uint8Arrays() or strings; our chunking expects
   // UTF-8 encoded Uint8Arrays at present, so this stream ensures everything
