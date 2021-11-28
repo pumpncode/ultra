@@ -77,9 +77,22 @@ const render = async (
     `</script></head><body>`;
 
   const tail = () =>
-    `</body><script>self.__ultra = ${
-      JSON.stringify(Array.from(cache.entries()))
-    }</script></html>`;
+    `<script>
+      self.__ultra = ${
+        JSON.stringify(Array.from(cache.entries()))
+      }
+      ${
+        !isDev
+				? `
+					if (typeof window.__REACT_DEVTOOLS_GLOBAL_HOOK__ === 'object') {
+						__REACT_DEVTOOLS_GLOBAL_HOOK__.inject = function() {};
+					}
+				`
+				: ``
+			}
+    </script>
+    </body>
+    </html>`;
 
   // body.getReader() can emit Uint8Arrays() or strings; our chunking expects
   // UTF-8 encoded Uint8Arrays at present, so this stream ensures everything
