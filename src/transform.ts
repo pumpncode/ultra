@@ -1,83 +1,126 @@
 import * as esbuild from "https://deno.land/x/esbuild@v0.12.24/mod.js";
-import { parse } from "https://x.nest.land/swc@0.1.4/mod.ts";
+// import { parse, print } from "https://x.nest.land/swc@0.1.4/mod.ts";
+
+import { Parser as AcornParser } from "https://esm.sh/acorn";
+import jsx from "https://esm.sh/acorn-jsx";
+import { parse, print } from "https://raw.githubusercontent.com/pumpncode/recast/deno/main.ts";
+
 import type {
   CallExpression,
-  HasSpan,
+  VariableDeclarator
 } from "https://deno.land/x/swc@0.1.4/types/options.ts";
 import { TransformOptions } from "./types.ts";
 
 const isDev = Deno.env.get("mode") === "dev";
 const serverStart = +new Date();
 
-let offset = 0;
-let length = 0;
-
 const transform = async (
   { source, importmap, root, loader = "tsx" }: TransformOptions,
 ) => {
-  const t0 = performance.now();
   const { code } = await esbuild.transform(source, {
     loader,
     target: ["esnext"],
     minify: !isDev,
   });
-  let c = "";
-  const ast = parse(code, {
-    syntax: "typescript",
-    tsx: true,
-    dynamicImport: true,
-  });
-  ast.body.forEach((i) => {
-    if (i.type == "ImportDeclaration") {
-      const { value, span } = i.source;
-      c += code.substring(offset - length, span.start - length);
-      c += `"${
-        importmap?.imports?.[value] ||
-        value.replace(
-          /\.(j|t)sx?/gi,
-          () => `.js?ts=${isDev ? +new Date() : serverStart}`,
-        )
-      }"`;
-      offset = span.end;
-    }
-    if (i.type == "VariableDeclaration") {
-      i.declarations?.forEach((o) =>
-        (o.init as CallExpression)!.arguments?.forEach(({ expression }) => {
-          // @ts-ignore deno_swc doesn't have generics
-          const expressionBody = expression.body;
 
-          if (expressionBody?.callee?.value?.toLowerCase() === "import") {
-            expressionBody?.arguments?.forEach(
-              (b: {
-                expression: {
-                  value: string;
-                } & HasSpan;
-              }) => {
-                const { value, span } = b?.expression;
-                c += code.substring(offset - length, span.start - length);
-                c += `"${
-                  value.replace(/\.(j|t)sx?/gi, () =>
-                    `.js?ts=${
-                      isDev
-                        ? +new Date()
-                        : serverStart
-                    }`)
-                }"`;
-                offset = span.end;
-              },
-            );
-          }
+  const ast = parse(code, {
+    parser: {
+      parse(source) {
+        return AcornParser.extend(jsx()).parse(source, {
+          ecmaVersion: "latest",
+          sourceType: "module",
+
         })
+      }
+    }
+  });
+
+  ast.program.body = ast.program.body.map((node) => {
+    const newNode = {...node};
+
+    const {
+      type
+    } = newNode;
+
+    if ([
+      "ImportDeclaration",
+      "ExportNamedDeclaration",
+      "ExportAllDeclaration"
+    ].includes(type)) {
+      const {
+        source: {
+          value
+        }
+      } = newNode;
+
+      // @ts-ignore ???
+      newNode.source.value = importmap?.imports?.[value] || value.replace(
+        /\.(j|t)sx?/gi,
+        () => `.js?ts=${isDev ? Date.now() : serverStart}`,
       );
     }
-  });
-  c += code.substring(offset - length, code.length + offset);
-  length += code.length + 1;
-  offset = length;
-  const t1 = performance.now();
-  // console.log(`Transpile: in ${t1 - t0}ms`);
-  c = c.replaceAll("ULTRA_URL", root);
-  return c;
-};
+    else if (type === "VariableDeclaration") {
+      const {
+        declarations
+      } = newNode;
+
+      const newDeclarations = declarations.map((declarator) => {
+        const newDeclarator = {...declarator} as Omit<VariableDeclarator, "init"> & {
+          init: CallExpression
+        };
+
+        const {
+          init: {
+            arguments: initArguments
+          }
+        } = newDeclarator;
+
+        if (initArguments) {
+          const newInitArguments = initArguments.map((argument) => {
+            const newArgument = {...argument};
+  
+            const {
+              expression: {
+                body: {
+                  arguments: bodyArguments,
+                  callee: {
+                    value
+                  }
+                }
+              }
+            } = newArgument;
+  
+            if (value.toLocaleLowerCase() === "import") {
+              const newBodyArguments = bodyArguments.map((bodyArgument) => {
+                const newBodyArgument = {
+                  ...bodyArgument,
+                  value: value.replace(
+                    /\.(j|t)sx?/gi,
+                    () => `.js?ts=${isDev ? Date.now() : serverStart}`,
+                  )
+                }
+                return newBodyArgument;
+              })
+  
+              newArgument.body.arguments = newBodyArguments;
+            }
+  
+            return newArgument;
+          });
+          
+          newDeclarator.init.arguments = newInitArguments;
+        }
+
+        return newDeclarator;
+      })
+
+      newNode.declarations = newDeclarations
+    }
+
+    return newNode;
+  })
+
+  return print(ast).code;
+}
 
 export default transform;
