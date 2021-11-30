@@ -27,7 +27,7 @@ const transform = async (
         return AcornParser.extend(jsx()).parse(source, {
           ecmaVersion: "latest",
           sourceType: "module",
-
+          locations: true
         })
       }
     }
