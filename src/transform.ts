@@ -1,6 +1,4 @@
 import * as esbuild from "https://deno.land/x/esbuild@v0.12.24/mod.js";
-// import { parse, print } from "https://x.nest.land/swc@0.1.4/mod.ts";
-
 import { Parser as AcornParser } from "https://esm.sh/acorn";
 import jsx from "https://esm.sh/acorn-jsx";
 import { parse, print } from "https://raw.githubusercontent.com/pumpncode/recast/deno/main.ts";
