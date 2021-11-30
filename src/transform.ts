@@ -75,7 +75,7 @@ const transform = async (
   length += code.length + 1;
   offset = length;
   const t1 = performance.now();
-  console.log(`Transpile: in ${t1 - t0}ms`);
+  // console.log(`Transpile: in ${t1 - t0}ms`);
   c = c.replaceAll("ULTRA_URL", root);
   return c;
 };
