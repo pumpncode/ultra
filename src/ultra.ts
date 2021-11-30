@@ -36,6 +36,7 @@ function findFileOnDisk(pathname: string) {
   const jsx = pathname.replaceAll(".js", ".jsx");
   const tsx = pathname.replaceAll(".js", ".tsx");
   const ts = pathname.replaceAll(".js", ".ts");
+  const js = pathname;
 
   return existsSync(join(Deno.cwd(), "src", jsx))
     ? { path: jsx, loader: "jsx" as const }
@@ -43,6 +44,8 @@ function findFileOnDisk(pathname: string) {
     ? { path: tsx, loader: "tsx" as const }
     : existsSync(join(Deno.cwd(), "src", ts))
     ? { path: ts, loader: "ts" as const }
+    : existsSync(join(Deno.cwd(), "src", js))
+    ? { path: js, loader: "ts" as const }
     : null;
 }
 
@@ -55,6 +58,11 @@ const start = async(
     const { pathname } = context.request.url;
     if (pathname == "/") await next();
     try {
+
+      if (pathname.endsWith(".js") && existsSync(join(Deno.cwd(), "src", pathname))) {
+        throw new Error();
+      }
+
       await send(context, pathname, {
         root: join(Deno.cwd(), "src"),
       });
