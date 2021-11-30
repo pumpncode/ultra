@@ -1,7 +1,7 @@
 import * as esbuild from "https://deno.land/x/esbuild@v0.12.24/mod.js";
 import { Parser as AcornParser } from "https://esm.sh/acorn";
 import jsx from "https://esm.sh/acorn-jsx";
-import { parse, print } from "https://raw.githubusercontent.com/pumpncode/recast/deno/main.ts";
+import { parse, print } from "https://cdn.jsdelivr.net/gh/pumpncode/recast@deno/main.ts";
 
 import type {
   CallExpression,
