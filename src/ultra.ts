@@ -1,11 +1,11 @@
-import { existsSync } from "https://deno.land/std@0.107.0/fs/mod.ts";
-import { join } from "https://deno.land/std@0.107.0/path/mod.ts";
+import { existsSync } from "https://deno.land/std@0.123.0/fs/mod.ts";
+import { join } from "https://deno.land/std@0.123.0/path/mod.ts";
 import LRU from "https://deno.land/x/lru@1.0.2/mod.ts";
 import {
   Application,
   Router,
   send,
-} from "https://deno.land/x/oak@v10.0.0/mod.ts";
+} from "https://deno.land/x/oak@v10.1.1/mod.ts";
 import render from "./render.ts";
 import transform from "./transform.ts";
 import type { ImportMap, StartOptions } from "./types.ts";
@@ -73,30 +73,41 @@ const start = async(
 
   router.get("/:slug+.js", async (context, next) => {
     const { pathname } = context.request.url;
+
     if (memory.has(pathname) && !dev) {
+      
       context.response.type = "application/javascript";
       context.response.body = memory.get(pathname);
       return;
     }
     const file = findFileOnDisk(pathname);
-    if (!file) return await next();
+
+    if (!file) {
+      return await next();
+    }
 
     try {
       const source = await Deno.readTextFile(
         join(Deno.cwd(), "src", ...file.path.split("/")),
       );
+
       const code = await transform({
         source,
         importmap,
         root,
         loader: file.loader,
       });
-      if (!dev) memory.set(pathname, code);
+
+      if (!dev) {
+        memory.set(pathname, code);
+      }
       context.response.type = "application/javascript";
       context.response.body = code;
     } catch (e) {
       console.log(e);
     }
+
+    
   });
 
   router.get("/(.*)", async (context) => {

@@ -2,9 +2,9 @@ import React, { ReactElement } from "react";
 import ReactDOM from "react-dom/server";
 import { BaseLocationHook, Router } from "wouter";
 import { HelmetProvider } from "react-helmet";
-import { concat } from "https://deno.land/std@0.107.0/bytes/mod.ts";
-import { join } from "https://deno.land/std@0.107.0/path/mod.ts";
-import { Buffer } from "https://deno.land/std@0.107.0/io/mod.ts";
+import { concat } from "https://deno.land/std@0.123.0/bytes/mod.ts";
+import { join } from "https://deno.land/std@0.123.0/path/mod.ts";
+import { Buffer } from "https://deno.land/std@0.123.0/io/mod.ts";
 import type { Navigate, RenderOptions } from "./types.ts";
 
 // renderToReadableStream not available yet in official types
@@ -36,7 +36,12 @@ const render = async (
   const chunkSize = _chunkSize ?? defaultChunkSize;
 
   const ts = isDev ? +new Date() : serverStart;
-  const app = await import(join(root, `app.js?ts=${ts}`));
+
+  const appUrl = join(root, `app.js?ts=${ts}`);
+  // const response = (await import("http://localhost:8000/app/routes.jsx")).default;
+  // console.log(response);
+
+  const app = await import(appUrl);
 
   const helmetContext: { helmet: Record<string, number> } = { helmet: {} };
   const cache = new Map();

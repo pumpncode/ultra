@@ -1,7 +1,9 @@
-import * as esbuild from "https://deno.land/x/esbuild@v0.12.24/mod.js";
+import * as esbuild from "https://deno.land/x/esbuild@v0.14.14/mod.js";
 import { Parser as AcornParser } from "https://esm.sh/acorn";
 import jsx from "https://esm.sh/acorn-jsx";
-import { parse, print } from "https://cdn.jsdelivr.net/gh/pumpncode/recast@0.20.6-alpha/main.ts";
+import { parse, print, visit } from "https://cdn.jsdelivr.net/gh/pumpncode/recast@0.20.6-alpha/main.ts";
+
+import {builders} from "https://esm.sh/ast-types";
 
 import type {
   CallExpression,
@@ -45,17 +47,20 @@ const transform = async (
       "ExportNamedDeclaration",
       "ExportAllDeclaration"
     ].includes(type)) {
-      const {
-        source: {
-          value
-        }
-      } = newNode;
-
-      // @ts-ignore ???
-      newNode.source.value = importmap?.imports?.[value] || value.replace(
-        /\.(j|t)sx?/gi,
-        () => `.js?ts=${isDev ? Date.now() : serverStart}`,
-      );
+      if (newNode?.source?.value) {
+        const {
+          source: {
+            value
+          }
+        } = newNode;
+  
+        // @ts-ignore ???
+        newNode.source.value = importmap?.imports?.[value] || value.replace(
+          /\.(j|t)sx?$/gi,
+          () => `.js?ts=${isDev ? Date.now() : serverStart}`,
+        );
+      }
+      
     }
     else if (type === "VariableDeclaration") {
       const {
@@ -67,46 +72,52 @@ const transform = async (
           init: CallExpression
         };
 
-        const {
-          init: {
-            arguments: initArguments
-          }
-        } = newDeclarator;
-
-        if (initArguments) {
-          const newInitArguments = initArguments.map((argument) => {
-            const newArgument = {...argument};
+        if (newDeclarator?.init?.arguments) {
+          const {
+            init: {
+              arguments: initArguments
+            }
+          } = newDeclarator;
   
-            const {
-              expression: {
-                body: {
-                  arguments: bodyArguments,
-                  callee: {
-                    value
+          if (initArguments) {
+            const newInitArguments = initArguments.map((argument) => {
+              const newArgument = {...argument};
+  
+              if (newArgument?.expression?.body) {
+                const {
+                  expression: {
+                    body: {
+                      arguments: bodyArguments,
+                      callee: {
+                        value
+                      }
+                    }
                   }
+                } = newArgument;
+      
+                if (value.toLocaleLowerCase() === "import") {
+                  const newBodyArguments = bodyArguments.map((bodyArgument) => {
+                    const newBodyArgument = {
+                      ...bodyArgument,
+                      value: importmap?.imports?.[value] || value.replace(
+                        /\.(j|t)sx?$/gi,
+                        () => `.js?ts=${isDev ? Date.now() : serverStart}`,
+                      )
+                    }
+                    return newBodyArgument;
+                  })
+      
+                  newArgument.body.arguments = newBodyArguments;
                 }
               }
-            } = newArgument;
   
-            if (value.toLocaleLowerCase() === "import") {
-              const newBodyArguments = bodyArguments.map((bodyArgument) => {
-                const newBodyArgument = {
-                  ...bodyArgument,
-                  value: value.replace(
-                    /\.(j|t)sx?/gi,
-                    () => `.js?ts=${isDev ? Date.now() : serverStart}`,
-                  )
-                }
-                return newBodyArgument;
-              })
+              return newArgument;
+            });
+            
+            newDeclarator.init.arguments = newInitArguments;
+          }
   
-              newArgument.body.arguments = newBodyArguments;
-            }
-  
-            return newArgument;
-          });
           
-          newDeclarator.init.arguments = newInitArguments;
         }
 
         return newDeclarator;
@@ -117,6 +128,74 @@ const transform = async (
 
     return newNode;
   })
+
+  try {
+    visit(
+      ast,
+      {
+        visitImportExpression(path) {
+          const source = path.get("source");
+
+          const {
+            node: {
+              type: childType
+            }
+          } = source;
+
+          if (childType === "TemplateLiteral") {
+            const quasis = source.get("quasis");
+  
+            const lastPart = quasis.get(quasis.value.length - 1);
+    
+            const {
+              value: {
+                value: {
+                  raw,
+                  cooked
+                },
+                tail
+              }
+            } = lastPart;
+    
+            lastPart.replace(
+              builders.templateElement(
+                {
+                  raw: importmap?.imports?.[raw] || raw.replace(
+                    /\.(j|t)sx?$/gi,
+                    () => `.js?ts=${isDev ? Date.now() : serverStart}`
+                  ),
+                  cooked: importmap?.imports?.[cooked] || cooked.replace(
+                    /\.(j|t)sx?$/gi,
+                    () => `.js?ts=${isDev ? Date.now() : serverStart}`
+                  )
+                },
+                tail
+              )
+            )
+    
+          }
+          else if (childType === "Literal") {
+            const {
+              value
+            } = source.get("value");
+
+            source.replace(
+              builders.literal(
+                importmap?.imports?.[value] || value.replace(
+                  /\.(j|t)sx?$/gi,
+                  () => `.js?ts=${isDev ? Date.now() : serverStart}`
+                )
+              )
+            ) 
+          }
+  
+          this.traverse(path);
+        }
+      }
+    );
+  } catch {
+    // no catch
+  }
 
   return print(ast).code;
 }
