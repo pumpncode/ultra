@@ -50,7 +50,7 @@ function findFileOnDisk(pathname: string) {
 }
 
 const start = async(
-  { importmap: importMapSource, lang = "en" }: StartOptions,
+  { importmap: importMapSource, lang = "en", secure = false }: StartOptions,
 ) => {
   const importmap: ImportMap = JSON.parse(importMapSource);
 
@@ -139,17 +139,26 @@ const start = async(
   });
 
   if (prod) {
-    const certFile = env.get("certFile");
-    const keyFile = env.get("keyFile");
-
-    app.listen({port: 443, secure: true, certFile, keyFile });
-
-    const listener = listen({port: 80});
-
-    for await(const connection of listener) {
-      handleRedirect(connection);
-    }
     
+    const options = {
+      port: secure ? 443 : 80,
+      secure
+    }
+
+    if (secure) {
+      const certFile = env.get("certFile");
+      const keyFile = env.get("keyFile");
+
+      Object.assign(options, {certFile, keyFile});
+
+      const listener = listen({port: 80});
+
+      for await(const connection of listener) {
+        handleRedirect(connection);
+      }
+    }
+
+    app.listen(options);
   }
   else {
     app.listen({ port });
