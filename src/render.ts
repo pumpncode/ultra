@@ -1,10 +1,10 @@
-import React, { ReactElement } from "https://esm.sh/react@18.0.0-alpha-bc9bb87c2-20210917"
-import ReactDOM from "https://esm.sh/react-dom@18.0.0-alpha-bc9bb87c2-20210917/server"
-import { BaseLocationHook, Router } from "https://esm.sh/wouter?deps=react@18.0.0-alpha-bc9bb87c2-20210917&bundle"
-import { HelmetProvider } from "https://esm.sh/react-helmet-async?deps=react@18.0.0-alpha-bc9bb87c2-20210917&bundle"
-import { concat } from "https://deno.land/std@0.107.0/bytes/mod.ts";
-import { join } from "https://deno.land/std@0.107.0/path/mod.ts";
-import { Buffer } from "https://deno.land/std@0.107.0/io/mod.ts";
+import React, { ReactElement } from "react";
+import ReactDOM from "react-dom/server";
+import { BaseLocationHook, Router } from "wouter";
+import { HelmetProvider } from "react-helmet";
+import { concat } from "https://deno.land/std@0.123.0/bytes/mod.ts";
+import { join } from "https://deno.land/std@0.123.0/path/mod.ts";
+import { Buffer } from "https://deno.land/std@0.123.0/io/mod.ts";
 import type { Navigate, RenderOptions } from "./types.ts";
 
 // renderToReadableStream not available yet in official types
@@ -36,7 +36,12 @@ const render = async (
   const chunkSize = _chunkSize ?? defaultChunkSize;
 
   const ts = isDev ? +new Date() : serverStart;
-  const app = await import(join(root, `app.js?ts=${ts}`));
+
+  const appUrl = join(root, `app.js?ts=${ts}`);
+  // const response = (await import("http://localhost:8000/app/routes.jsx")).default;
+  // console.log(response);
+
+  const app = await import(appUrl);
 
   const helmetContext: { helmet: Record<string, number> } = { helmet: {} };
   const cache = new Map();
