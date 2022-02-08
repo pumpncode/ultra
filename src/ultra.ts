@@ -142,7 +142,8 @@ const start = async(
     
     const options = {
       port: secure ? 443 : 80,
-      secure
+      secure,
+      alpnProtocols: ["h2", "http/1.1"]
     }
 
     if (secure) {
