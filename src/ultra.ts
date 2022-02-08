@@ -18,7 +18,7 @@ const {
 
 const handleRedirect = async(connection) => {
   for await(const {request, respondWith} of serveHttp(connection)) {
-    respondWith(Response.redirect(request.url.replace("http", "https"), 302));
+    respondWith(Response.redirect(request.url.replace("http", "https"), 301));
   }
 }
 
