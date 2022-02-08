@@ -49,7 +49,7 @@ function findFileOnDisk(pathname: string) {
     : null;
 }
 
-const start = async(
+const start = (
   { importmap: importMapSource, lang = "en", secure = false }: StartOptions,
 ) => {
   const importmap: ImportMap = JSON.parse(importMapSource);
@@ -152,11 +152,11 @@ const start = async(
 
       Object.assign(options, {certFile, keyFile});
 
-      const listener = listen({port: 80});
+      // const listener = listen({port: 80});
 
-      for await(const connection of listener) {
-        handleRedirect(connection);
-      }
+      // for await(const connection of listener) {
+      //   handleRedirect(connection);
+      // }
     }
 
     app.listen(options);
