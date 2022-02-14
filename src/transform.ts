@@ -26,14 +26,34 @@ const transform = async (
   const ast = parse(code, {
     parser: {
       parse(source) {
-        return AcornParser.extend(jsx()).parse(source, {
+        const comments: any[] = [];
+        const tokens: any[] = [];
+        
+        const ast = AcornParser.extend(jsx()).parse(source, {
           ecmaVersion: "latest",
           sourceType: "module",
-          locations: true
+          locations: true,
+          allowHashBang: true,
+          allowImportExportEverywhere: true,
+          allowReturnOutsideFunction: true,
+          onComment: [],
+          onToken: []
         })
+
+        if (!ast.comments) {
+          ast.comments = comments;
+        }
+      
+        if (!ast.tokens) {
+          ast.tokens = tokens;
+        }
+
+        return ast;
       }
     }
   });
+
+  
 
   ast.program.body = ast.program.body.map((node) => {
     const newNode = {...node};
