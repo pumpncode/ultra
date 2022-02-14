@@ -1,8 +1,8 @@
-import React, { lazy, Suspense } from "react";
-import { Helmet } from "react-helmet";
-import { Route } from "wouter";
-import { SWRConfig } from "swr";
-import ultraCache from "ultra/cache";
+import React, { lazy, Suspense } from "https://esm.sh/react@18"
+import { Helmet } from "https://esm.sh/react-helmet-async"
+import { Route } from "https://esm.sh/wouter?bundle&deps=react@18"
+import { SWRConfig } from "https://esm.sh/swr"
+import ultraCache from "https://deno.land/x/ultra@v0.6/cache.js"
 import { Cache } from "https://deno.land/x/ultra/src/types.ts";
 
 const Index = lazy(() => import("./index.jsx"));
