@@ -152,11 +152,11 @@ const start = (
 
       Object.assign(options, {certFile, keyFile});
 
-      // const listener = listen({port: 80});
+      const listener = listen({port: 80});
 
-      // for await(const connection of listener) {
-      //   handleRedirect(connection);
-      // }
+      for await(const connection of listener) {
+        handleRedirect(connection);
+      }
     }
 
     app.listen(options);
