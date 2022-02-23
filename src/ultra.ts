@@ -49,7 +49,7 @@ function findFileOnDisk(pathname: string) {
     : null;
 }
 
-const start = (
+const start = async (
   { importmap: importMapSource, lang = "en", secure = false }: StartOptions,
 ) => {
   const importmap: ImportMap = JSON.parse(importMapSource);
@@ -172,7 +172,7 @@ const start = (
 
       const listener = listen({port: 80});
 
-      for await(const connection of listener) {
+      for await (const connection of listener) {
         handleRedirect(connection);
       }
     }
