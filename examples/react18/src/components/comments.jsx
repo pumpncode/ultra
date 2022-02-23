@@ -1,5 +1,5 @@
-import React from "https://esm.sh/react@18"
-import useSWR from "https://esm.sh/swr"
+import React from "react";
+import useSWR from "swr";
 
 export const fetcher = async () => {
   const comments = await new Promise((resolve, reject) => {
