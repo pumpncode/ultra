@@ -50,6 +50,24 @@ const start = (
     const {
       request: {
         url: {
+          protocol,
+          href
+        }
+      }
+    } = context;
+
+    if (secure && protocol === "http:") {
+      context.response.redirect(href.replace("http", "https"));
+    }
+    else {
+      await next();
+    }
+  });
+
+  app.use(async (context, next) => {
+    const {
+      request: {
+        url: {
           hostname,
           href
         }
@@ -161,25 +179,7 @@ const start = (
       const keyFile = env.get("keyFile");
 
       Object.assign(options, {certFile, keyFile});
-
-      app.use(async (context, next) => {
-        const {
-          request: {
-            url: {
-              protocol,
-              href
-            }
-          }
-        } = context;
-    
-        if (secure && protocol === "http:") {
-          context.response.redirect(href.replace("http", "https"));
-        }
-        else {
-          await next();
-        }
-      });
-
+      
       app.listen({
         port: 80
       });
