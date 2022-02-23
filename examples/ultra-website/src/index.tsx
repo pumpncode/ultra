@@ -1,5 +1,5 @@
-import React, { Suspense } from "https://esm.sh/react@18"
-import useSWR from "https://esm.sh/swr"
+import React, { Suspense } from "react";
+import useSWR from "swr";
 
 const fetcher = (url) => fetch(url).then((r) => r.json());
 
