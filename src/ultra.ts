@@ -11,16 +11,8 @@ import transform from "./transform.ts";
 import type { ImportMap, StartOptions } from "./types.ts";
 
 const {
-  env,
-  listen,
-  serveHttp
+  env
 } = Deno;
-
-const handleRedirect = async(connection) => {
-  for await (const {request, respondWith} of serveHttp(connection)) {
-    respondWith(Response.redirect(request.url.replace("http", "https"), 301));
-  }
-}
 
 const port = Number(env.get("port")) || 3000;
 const dev = env.get("mode") === "dev";
@@ -49,7 +41,7 @@ function findFileOnDisk(pathname: string) {
     : null;
 }
 
-const start = async (
+const start = (
   { importmap: importMapSource, lang = "en", secure = false }: StartOptions,
 ) => {
   const importmap: ImportMap = JSON.parse(importMapSource);
@@ -71,6 +63,24 @@ const start = async (
       await next();
     }
   })
+
+  app.use(async (context, next) => {
+    const {
+      request: {
+        url: {
+          protocol,
+          href
+        }
+      }
+    } = context;
+
+    if (secure && protocol === "http:") {
+      context.response.redirect(href.replace("http", "https"));
+    }
+    else {
+      await next();
+    }
+  });
 
   app.use(async (context, next) => {
     const { pathname } = context.request.url;
@@ -169,12 +179,6 @@ const start = async (
       const keyFile = env.get("keyFile");
 
       Object.assign(options, {certFile, keyFile});
-
-      const listener = listen({port: 80});
-
-      for await (const connection of listener) {
-        handleRedirect(connection);
-      }
     }
 
     app.listen(options);
