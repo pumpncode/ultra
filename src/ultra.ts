@@ -55,6 +55,24 @@ const start = (
   const importmap: ImportMap = JSON.parse(importMapSource);
 
   app.use(async (context, next) => {
+    const {
+      request: {
+        url: {
+          hostname,
+          href
+        }
+      }
+    } = context;
+
+    if (hostname.startsWith("www.")) {
+      context.response.redirect(href.replace("www.", ""));
+    }
+    else {
+      await next();
+    }
+  })
+
+  app.use(async (context, next) => {
     const { pathname } = context.request.url;
     if (pathname == "/") await next();
     try {
