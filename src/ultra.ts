@@ -46,41 +46,43 @@ const start = (
 ) => {
   const importmap: ImportMap = JSON.parse(importMapSource);
 
-  app.use(async (context, next) => {
-    const {
-      request: {
-        url: {
-          protocol,
-          href
+  if (prod) {
+    app.use(async (context, next) => {
+      const {
+        request: {
+          url: {
+            protocol,
+            href
+          }
         }
+      } = context;
+
+      if (secure && protocol === "http:") {
+        context.response.redirect(href.replace("http", "https"));
       }
-    } = context;
+      else {
+        await next();
+      }
+    });
 
-    if (secure && protocol === "http:") {
-      context.response.redirect(href.replace("http", "https"));
-    }
-    else {
-      await next();
-    }
-  });
-
-  app.use(async (context, next) => {
-    const {
-      request: {
-        url: {
-          hostname,
-          href
+    app.use(async (context, next) => {
+      const {
+        request: {
+          url: {
+            hostname,
+            href
+          }
         }
-      }
-    } = context;
+      } = context;
 
-    if (hostname.startsWith("www.")) {
-      context.response.redirect(href.replace("www.", ""));
-    }
-    else {
-      await next();
-    }
-  })
+      if (hostname.startsWith("www.")) {
+        context.response.redirect(href.replace("www.", ""));
+      }
+      else {
+        await next();
+      }
+    });
+  }
 
   app.use(async (context, next) => {
     const { pathname } = context.request.url;
