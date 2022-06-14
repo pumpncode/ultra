@@ -1,10 +1,10 @@
 {
   "imports": {
-    "react": "https://esm.sh/react@18",
-    "react-dom": "https://esm.sh/react-dom@18?deps=react@18",
-    "react-dom/server": "https://esm.sh/react-dom@18/server?deps=react@18",
+    "react": "https://esm.sh/reac",
+    "react-dom": "https://esm.sh/react-dom",
+    "react-dom/server": "https://esm.sh/react-dom/server",
     "react-helmet": "https://esm.sh/react-helmet-async",
-    "wouter": "https://esm.sh/wouter?bundle&deps=react@18",
+    "wouter": "https://esm.sh/wouter?bundle",
     "swr": "https://esm.sh/swr",
     "ultra/cache": "https://deno.land/x/ultra@v0.6/cache.js"
   }
