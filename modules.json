@@ -1,6 +1,6 @@
 {
   "imports": {
-    "react": "https://esm.sh/reac",
+    "react": "https://esm.sh/react",
     "react-dom": "https://esm.sh/react-dom",
     "react-dom/server": "https://esm.sh/react-dom/server",
     "react-helmet": "https://esm.sh/react-helmet-async",
