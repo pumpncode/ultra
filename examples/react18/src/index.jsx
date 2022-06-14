@@ -1,4 +1,4 @@
-import React, { lazy, Suspense } from "https://esm.sh/react"
+import React, { lazy, Suspense } from "react";
 import Spinner from "./components/spinner.jsx";
 
 const Post = lazy(() => import("./components/post.jsx"));

@@ -1,7 +1,7 @@
-import React, { ReactElement } from "https://esm.sh/react"
-import ReactDOM from "https://esm.sh/react-dom/server"
-import { BaseLocationHook, Router } from "https://esm.sh/wouter?bundle"
-import { HelmetProvider } from "https://esm.sh/react-helmet-async"
+import React, { ReactElement } from "react";
+import ReactDOM from "react-dom/server";
+import { BaseLocationHook, Router } from "wouter";
+import { HelmetProvider } from "react-helmet";
 import { concat } from "https://deno.land/std@0.123.0/bytes/mod.ts";
 import { join } from "https://deno.land/std@0.123.0/path/mod.ts";
 import { Buffer } from "https://deno.land/std@0.123.0/io/mod.ts";

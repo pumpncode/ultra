@@ -1,5 +1,5 @@
-import { Helmet } from "https://esm.sh/react-helmet-async"
-import React from "https://esm.sh/react"
+import { Helmet } from "react-helmet";
+import React from "react";
 
 const Ultra = () => {
   return (

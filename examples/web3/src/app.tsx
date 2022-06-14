@@ -1,5 +1,5 @@
-import { Helmet } from "https://esm.sh/react-helmet-async"
-import React, { useEffect, useState } from "https://esm.sh/react"
+import { Helmet } from "react-helmet";
+import React, { useEffect, useState } from "react";
 import { Web3Provider } from "@ethersproject/providers";
 import type { ExternalProvider } from "@ethersproject/providers";
 
